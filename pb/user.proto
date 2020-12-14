@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package heyifeng.v1.user;
+
+service User {
+    rpc GetUser(GetUserRequest) returns (UserInfo) {}
+
+    // 如何保证原子更新？
+    rpc SetUser(SetUserRequest) returns (SetUserResponse) {}
+
+    // 允许授权, 发放授权码
+    rpc Grant(GrantRequest) returns (GrantResponse) {
+
+    }
+}
+
+message GetUserRequest {
+    string user_id = 1;
+    FieldMask field_mask = 2;
+}
+
+message UserInfo {
+    string name = 1;
+    string sex = 2;
+    int32 age = 3;
+
+    float height = 4;
+
+    string addr = 5;
+    string email = 6;
+}
+
+enum Sex {
+    UNSPECTED = 0;
+    MALE = 1;
+    FEMALE = 2;
+    OTHER = 3;
+}
+
+message SetUserRequest {
+    string user_id = 1;
+    FieldMask field_mask = 2;
+}
+
+message SetUserResponse {
+    bool success = 1;
+}
+
