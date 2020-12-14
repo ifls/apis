@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package heyifeng.v1.auth;
+
+service Login {
+    rpc Login(LoginRequest) returns (LoginResponse) {}
+
+    rpc Logout(LogoutRequest) returns (LogoutResponse) {}
+
+    // 允许授权, 发放授权码
+    rpc Grant(GrantRequest) returns (GrantResponse) {
+
+    }
+}
+
+message GrantRequest {
+
+}
+
+message GrantResponse {
+    string code = 1;
+}
