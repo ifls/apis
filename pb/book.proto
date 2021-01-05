@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package heyifeng.v1.book;
+
+service BookService {
+    // 标准方法
+    rpc CreateBook(CreateBookRequest) returns (CreateBookResponse) {}
+    rpc DeleteBook(DeleteBookRequest) returns (DeleteBookResponse) {}
+    rpc GetBook(GetBookRequest) returns (Book) {}
+    // 如何保证原子更新？
+    rpc UpdateBook(UpdateBookRequest) returns (UpdateBookResponse) {}
+    rpc ListBooks(ListBooksRequest) returns (ListBooksResponse) {}
+
+    // 非标准方法
+    // 撤销删除，如果支持标记删除
+    rpc UndeleteBook(UndeleteBookRequest) returns (UndeleteBookResponse) {}
+    rpc SearchBook(SearchBookRequest) returns (SearchBookResponse) {}
+    rpc BatchGetBook(BatchGetBookRequest) returns (BatchGetBookResponse) {}
+}
+
+message CreateBookRequest {
+    Book book = 1;
+}
+
+message CreateBookResponse {
+    string book_id = 1;
+}
+
+message DeleteBookRequest {
+    string book_id = 1;
+}
+
+message DeleteBookResponse {
+    bool success = 1;
+}
+
+message GetBookRequest {
+    string book_id = 1;
+    FieldMask field_mask = 2;
+}
+
+message BatchGetBookRequest {
+    repeated string book_ids = 1;
+    FieldMask field_mask = 2;
+}
+
+message BatchGetBookResponse {
+    repeated Book books = 1;
+}
+
+message Book {
+    string SNIC = 1;
+    string name = 2;        // 书名
+    string publisher = 3;   // 出版社
+    int64 publish_duration = 4; // 出版日期
+    
+    Author author = 5; // 作者
+    string version = 6;  // 版本
+
+    float rate = 8; //评分
+}
+
+message Author {
+    string name = 1;
+    string english_name = 2;
+}
+
+message UpdateBookRequest {
+    string user_id = 1;
+    FieldMask field_mask = 2;
+}
+
+message UpdateBookResponse {
+    bool success = 1;
+}
+
+message ListBooksRequest {
+    string order = 1;  // 和sql 语句的 一样
+    string page_token = 2;
+    int32 page_size = 3;
+    string parent = 4;  // 父资源
+}
+
+message ListBooksResponse {
+    repeated Book books = 1;
+    string next_page_token = 2;
+}
+
+message UndeleteBookRequest {
+    string book_id = 1;
+}
+
+message UndeleteBookResponse {
+    bool success = 1;
+}
+
+message SearchBookRequest {
+
+}
+
+message SearchBookResponse {
+
+}
