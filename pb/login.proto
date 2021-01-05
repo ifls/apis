@@ -3,14 +3,11 @@ syntax = "proto3";
 package heyifeng.v1.auth;
 
 service Login {
+    // 在redis 创建一个会话信息
     rpc Login(LoginRequest) returns (LoginResponse) {}
 
+    // 在redis 删除一个会话信息
     rpc Logout(LogoutRequest) returns (LogoutResponse) {}
-
-    // 允许授权, 发放授权码
-    rpc Grant(GrantRequest) returns (GrantResponse) {
-
-    }
 }
 
 message GrantRequest {

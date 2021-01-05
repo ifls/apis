@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package heyifeng.v1.auth;
 
+// CAS Central Authentication Service
 service Auth {
+    // 允许授权, 发放授权码
     rpc Auth(AuthRequest) returns (AuthResponse) {
         option (google.api.http) = {
             post: "/v1/auth/authorize"
