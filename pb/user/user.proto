@@ -1,6 +1,10 @@
 syntax = "proto3";
 
-package heyifeng.v1.user;
+package heyifeng.user.v1;
+
+import "google/protobuf/field_mask.proto";
+
+option go_package = "user";
 
 service User {
     rpc GetUser(GetUserRequest) returns (UserInfo) {}
@@ -9,14 +13,11 @@ service User {
     rpc SetUser(SetUserRequest) returns (SetUserResponse) {}
 
     // 允许授权, 发放授权码
-    rpc Grant(GrantRequest) returns (GrantResponse) {
-
-    }
 }
 
 message GetUserRequest {
     string user_id = 1;
-    FieldMask field_mask = 2;
+    google.protobuf.FieldMask field_mask = 2;
 }
 
 message UserInfo {
@@ -39,7 +40,7 @@ enum Sex {
 
 message SetUserRequest {
     string user_id = 1;
-    FieldMask field_mask = 2;
+    google.protobuf.FieldMask field_mask = 2;
 }
 
 message SetUserResponse {

@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-package heyifeng.v1.auth;
+package heyifeng.login.v1;
+
+option go_package = "login";
 
 service Login {
     rpc Login(LoginRequest) returns (LoginResponse) {}
@@ -11,6 +13,22 @@ service Login {
     rpc Grant(GrantRequest) returns (GrantResponse) {
 
     }
+}
+
+message LoginRequest {
+
+}
+
+message LoginResponse {
+
+}
+
+message LogoutRequest {
+
+}
+
+message LogoutResponse {
+
 }
 
 message GrantRequest {
