@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package heyifeng.auth.v1;
+
+
+option go_package = "auth";
+
+service Auth {
+    rpc Auth(AuthRequest) returns (AuthResponse) {}
+
+    rpc GetToken(GetTokenRequest) returns (GetTokenResponse) {
+
+    }
+}
+
+message AuthRequest {
+    string response_type = 1;  // code 表示要求返回授权码
+    string client_id = 2;   // 客户端唯一id
+    string redirect_uri = 3;  //下一步要跳转的网站, 请求者指定的网站 追加 code=AUTHORIZATION_CODE query 参数
+    string scope = 4;       // 表示授权范围
+}
+
+message AuthResponse {
+
+}
+
+message GetTokenRequest {
+    string client_id = 1;
+    string client_secret = 2; // client_id 和 client_secret 是单个应用 唯一id
+    string grant_type = 3;  // authorization_code 表示使用授权码方式 换取token, 和 refresh_token 用于刷新token
+    string code = 4;        // 授权码
+    string redirect_uri = 5; // 成功, 会让此uri 追加 一段json
+    string refresh_token = 6;   // 用于从此token, 拿到新的 token
+}
+
+message TokenInfo {
+    string access_token = 1; // 每个api 请求都放在请求头 Authorization: Bearer {access_token} 
+    string token_type = 2; // bearer类型的token(只签名, 需要加密配置tls使用) 和mac 类型的token(应对不安全的网络http协议, 相比bearer 还需要时间戳, nonce, 客户度mac信息)
+    int64 expires_in = 3;
+    string refresh_token = 4;
+    string scope = 5;
+    string uid = 6;     // 需要这个?
+    map<string, string> info = 7;
+}
+
+message GetTokenResponse {
+
+}

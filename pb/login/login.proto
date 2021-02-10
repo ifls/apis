@@ -1,6 +1,8 @@
 syntax = "proto3";
 
-package heyifeng.v1.auth;
+package heyifeng.login.v1;
+
+option go_package = "login";
 
 service Login {
     // 在redis 创建一个会话信息
@@ -8,6 +10,22 @@ service Login {
 
     // 在redis 删除一个会话信息
     rpc Logout(LogoutRequest) returns (LogoutResponse) {}
+}
+
+message LoginRequest {
+
+}
+
+message LoginResponse {
+
+}
+
+message LogoutRequest {
+
+}
+
+message LogoutResponse {
+
 }
 
 message GrantRequest {
