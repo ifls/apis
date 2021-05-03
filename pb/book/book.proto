@@ -17,7 +17,12 @@ service BookService {
         };
     }
     rpc DeleteBook(DeleteBookRequest) returns (DeleteBookResponse) {}
-    rpc GetBook(GetBookRequest) returns (Book) {}
+    rpc GetBook(GetBookRequest) returns (Book) {
+        option (google.api.http) = {
+            // The `parent` captures the parent resource name, such as "shelves/1".
+            get: "/v1/books"
+        };
+    }
     // 如何保证原子更新？
     rpc UpdateBook(UpdateBookRequest) returns (UpdateBookResponse) {}
     rpc ListBooks(ListBooksRequest) returns (ListBooksResponse) {}
