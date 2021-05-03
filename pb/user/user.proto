@@ -1,13 +1,18 @@
 syntax = "proto3";
 
-package heyifeng.user.v1;
+package user.v1;
 
 import "google/protobuf/field_mask.proto";
+import "google/api/annotations.proto";
 
-option go_package = "user";
+option go_package = "github.com/ifls/apis/golang/user";
 
 service User {
-    rpc GetUser(GetUserRequest) returns (UserInfo) {}
+    rpc GetUser(GetUserRequest) returns (UserInfo) {
+        option (google.api.http) = {
+            get: "/v1/users"
+        };
+    }
 
     // 如何保证原子更新？
     rpc SetUser(SetUserRequest) returns (SetUserResponse) {}

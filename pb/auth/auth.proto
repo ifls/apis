@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package com.heyifeng.auth.v1;
+package auth.v1;
 
 
-option go_package = "auth";
+option go_package = "github.com/ifls/apis/golang/auth";
 
 service Auth {
     rpc Auth(AuthRequest) returns (AuthResponse) {}
