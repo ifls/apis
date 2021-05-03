@@ -123,7 +123,7 @@ message Author {
 }
 
 message UpdateBookRequest {
-    string id = 1;
+    Book book = 1;
     google.protobuf.FieldMask field_mask = 2;
 }
 
