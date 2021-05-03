@@ -5,7 +5,6 @@ package book.v1;
 option go_package = "github.com/ifls/apis/go/book";
 
 import "google/protobuf/field_mask.proto";
-import "google/protobuf/api.proto";
 import "google/api/annotations.proto";
 
 service BookService {
