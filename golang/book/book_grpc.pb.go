@@ -25,9 +25,9 @@ type BookServiceClient interface {
 	// 标准方法
 	CreateBook(ctx context.Context, in *CreateBookRequest, opts ...grpc.CallOption) (*CreateBookResponse, error)
 	DeleteBook(ctx context.Context, in *DeleteBookRequest, opts ...grpc.CallOption) (*DeleteBookResponse, error)
-	GetBook(ctx context.Context, in *GetBookRequest, opts ...grpc.CallOption) (*Book, error)
-	// 如何保证原子更新？
+	// 保证原子更新
 	UpdateBook(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*UpdateBookResponse, error)
+	GetBook(ctx context.Context, in *GetBookRequest, opts ...grpc.CallOption) (*GetBookResponse, error)
 	ListBooks(ctx context.Context, in *ListBooksRequest, opts ...grpc.CallOption) (*ListBooksResponse, error)
 	// 非标准方法
 	// 撤销删除，如果支持标记删除
@@ -62,18 +62,18 @@ func (c *bookServiceClient) DeleteBook(ctx context.Context, in *DeleteBookReques
 	return out, nil
 }
 
-func (c *bookServiceClient) GetBook(ctx context.Context, in *GetBookRequest, opts ...grpc.CallOption) (*Book, error) {
-	out := new(Book)
-	err := c.cc.Invoke(ctx, "/book.v1.BookService/GetBook", in, out, opts...)
+func (c *bookServiceClient) UpdateBook(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*UpdateBookResponse, error) {
+	out := new(UpdateBookResponse)
+	err := c.cc.Invoke(ctx, "/book.v1.BookService/UpdateBook", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *bookServiceClient) UpdateBook(ctx context.Context, in *UpdateBookRequest, opts ...grpc.CallOption) (*UpdateBookResponse, error) {
-	out := new(UpdateBookResponse)
-	err := c.cc.Invoke(ctx, "/book.v1.BookService/UpdateBook", in, out, opts...)
+func (c *bookServiceClient) GetBook(ctx context.Context, in *GetBookRequest, opts ...grpc.CallOption) (*GetBookResponse, error) {
+	out := new(GetBookResponse)
+	err := c.cc.Invoke(ctx, "/book.v1.BookService/GetBook", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -123,9 +123,9 @@ type BookServiceServer interface {
 	// 标准方法
 	CreateBook(context.Context, *CreateBookRequest) (*CreateBookResponse, error)
 	DeleteBook(context.Context, *DeleteBookRequest) (*DeleteBookResponse, error)
-	GetBook(context.Context, *GetBookRequest) (*Book, error)
-	// 如何保证原子更新？
+	// 保证原子更新
 	UpdateBook(context.Context, *UpdateBookRequest) (*UpdateBookResponse, error)
+	GetBook(context.Context, *GetBookRequest) (*GetBookResponse, error)
 	ListBooks(context.Context, *ListBooksRequest) (*ListBooksResponse, error)
 	// 非标准方法
 	// 撤销删除，如果支持标记删除
@@ -145,11 +145,11 @@ func (UnimplementedBookServiceServer) CreateBook(context.Context, *CreateBookReq
 func (UnimplementedBookServiceServer) DeleteBook(context.Context, *DeleteBookRequest) (*DeleteBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBook not implemented")
 }
-func (UnimplementedBookServiceServer) GetBook(context.Context, *GetBookRequest) (*Book, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBook not implemented")
-}
 func (UnimplementedBookServiceServer) UpdateBook(context.Context, *UpdateBookRequest) (*UpdateBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateBook not implemented")
+}
+func (UnimplementedBookServiceServer) GetBook(context.Context, *GetBookRequest) (*GetBookResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBook not implemented")
 }
 func (UnimplementedBookServiceServer) ListBooks(context.Context, *ListBooksRequest) (*ListBooksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListBooks not implemented")
@@ -212,24 +212,6 @@ func _BookService_DeleteBook_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _BookService_GetBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBookRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BookServiceServer).GetBook(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/book.v1.BookService/GetBook",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BookServiceServer).GetBook(ctx, req.(*GetBookRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _BookService_UpdateBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateBookRequest)
 	if err := dec(in); err != nil {
@@ -244,6 +226,24 @@ func _BookService_UpdateBook_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(BookServiceServer).UpdateBook(ctx, req.(*UpdateBookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BookService_GetBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookServiceServer).GetBook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/book.v1.BookService/GetBook",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookServiceServer).GetBook(ctx, req.(*GetBookRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -336,12 +336,12 @@ var BookService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _BookService_DeleteBook_Handler,
 		},
 		{
-			MethodName: "GetBook",
-			Handler:    _BookService_GetBook_Handler,
-		},
-		{
 			MethodName: "UpdateBook",
 			Handler:    _BookService_UpdateBook_Handler,
+		},
+		{
+			MethodName: "GetBook",
+			Handler:    _BookService_GetBook_Handler,
 		},
 		{
 			MethodName: "ListBooks",

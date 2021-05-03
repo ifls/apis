@@ -6,32 +6,61 @@ option go_package = "github.com/ifls/apis/golang/book";
 
 import "google/protobuf/field_mask.proto";
 import "google/api/annotations.proto";
+import "google/rpc/status.proto";
+
+option java_package ="";
+option java_outer_classname="";
 
 service BookService {
     // 标准方法
     rpc CreateBook(CreateBookRequest) returns (CreateBookResponse) {
         option (google.api.http) = {
-            // The `parent` captures the parent resource name, such as "shelves/1".
             post: "/v1/books"
-            body: "book"
         };
     }
-    rpc DeleteBook(DeleteBookRequest) returns (DeleteBookResponse) {}
-    rpc GetBook(GetBookRequest) returns (Book) {
+
+    rpc DeleteBook(DeleteBookRequest) returns (DeleteBookResponse) {
         option (google.api.http) = {
-            // The `parent` captures the parent resource name, such as "shelves/1".
+            delete: "/v1/books/{id=*}"
+        };
+    }
+
+    // 保证原子更新
+    rpc UpdateBook(UpdateBookRequest) returns (UpdateBookResponse) {
+        option (google.api.http) = {
+            put: "/v1/books/{id=*}"
+        };
+    }
+
+    rpc GetBook(GetBookRequest) returns (GetBookResponse) {
+        option (google.api.http) = {
+            get: "/v1/books/{id=*}"
+        };
+    }
+
+    rpc ListBooks(ListBooksRequest) returns (ListBooksResponse) {
+        option (google.api.http) = {
             get: "/v1/books"
         };
     }
-    // 如何保证原子更新？
-    rpc UpdateBook(UpdateBookRequest) returns (UpdateBookResponse) {}
-    rpc ListBooks(ListBooksRequest) returns (ListBooksResponse) {}
 
     // 非标准方法
     // 撤销删除，如果支持标记删除
-    rpc UndeleteBook(UndeleteBookRequest) returns (UndeleteBookResponse) {}
-    rpc SearchBook(SearchBookRequest) returns (SearchBookResponse) {}
-    rpc BatchGetBook(BatchGetBookRequest) returns (BatchGetBookResponse) {}
+    rpc UndeleteBook(UndeleteBookRequest) returns (UndeleteBookResponse) {
+        option (google.api.http) = {
+            post: "/v1/books/{id=*}"
+        };
+    }
+    rpc SearchBook(SearchBookRequest) returns (SearchBookResponse) {
+        option (google.api.http) = {
+            get: "/v1/books"
+        };
+    }
+    rpc BatchGetBook(BatchGetBookRequest) returns (BatchGetBookResponse) {
+        option (google.api.http) = {
+            get: "/v1/books:search"
+        };
+    }
 }
 
 message CreateBookRequest {
@@ -39,11 +68,11 @@ message CreateBookRequest {
 }
 
 message CreateBookResponse {
-    string book_id = 1;
+    Book book = 1;
 }
 
 message DeleteBookRequest {
-    string book_id = 1;
+    string id = 1;
 }
 
 message DeleteBookResponse {
@@ -51,30 +80,41 @@ message DeleteBookResponse {
 }
 
 message GetBookRequest {
-    string book_id = 1;
-    google.protobuf.FieldMask field_mask = 2;
+    string id = 1;
 }
 
+message GetBookResponse {
+    Book book = 1;
+}
+
+// Required. IDs of the [Photos][google.streetview.publish.v1.Photo]. HTTP GET
+// requests require the following syntax for the URL query parameter:
+// `photoIds=<id1>&photoIds=<id2>&...`.
 message BatchGetBookRequest {
     repeated string book_ids = 1;
-    google.protobuf.FieldMask field_mask = 2;
 }
 
 message BatchGetBookResponse {
-    repeated Book books = 1;
+    repeated BookResponse results = 1;
+}
+
+message BookResponse {
+    google.rpc.Status status = 1;
+
+    Book book = 2;
 }
 
 message Book {
-    string SNIC = 1;
-    string name = 2;        // 书名
-    string publisher = 3;   // 出版社
-    int64 publish_duration = 4; // 出版日期
-    
-    Author author = 5; // 作者
-    string version = 6;  // 版本
+    string id = 1;  // 唯一id， 业务无关
+    string snic = 2;  // 唯一id，业务相关
+    string name = 3;        // 书名
+    string publisher = 4;   // 出版社
+    int64 publish_time = 5; // 出版日期
 
-    float rate = 8; //评分
-    int64 create_time = 9;
+    Author author = 6; // 作者
+    string version = 7;  // 版本
+
+    float rate = 9; //评分
 }
 
 message Author {
@@ -83,7 +123,7 @@ message Author {
 }
 
 message UpdateBookRequest {
-    string user_id = 1;
+    string id = 1;
     google.protobuf.FieldMask field_mask = 2;
 }
 
@@ -92,10 +132,9 @@ message UpdateBookResponse {
 }
 
 message ListBooksRequest {
-    string order = 1;  // 和sql 语句的 一样
+    string order_by = 1;  // 和sql 语句的 一样
     string page_token = 2;
     int32 page_size = 3;
-    string parent = 4;  // 父资源
 }
 
 message ListBooksResponse {
@@ -104,7 +143,7 @@ message ListBooksResponse {
 }
 
 message UndeleteBookRequest {
-    string book_id = 1;
+    string id = 1;
 }
 
 message UndeleteBookResponse {
@@ -112,9 +151,14 @@ message UndeleteBookResponse {
 }
 
 message SearchBookRequest {
+    string order_by = 1;  // 和sql 语句的 一样
+    string page_token = 2;
+    int32 page_size = 3;
 
+    string match = 4; // 模糊匹配
 }
 
 message SearchBookResponse {
-
+    repeated Book books = 1;
+    string next_page_token = 2;
 }
