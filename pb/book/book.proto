@@ -16,6 +16,7 @@ service BookService {
     rpc CreateBook(CreateBookRequest) returns (CreateBookResponse) {
         option (google.api.http) = {
             post: "/v1/books"
+            body: "*"  // post body是必须有的， 不然不会解析body ，delete 和get 方法不能有body
         };
     }
 
@@ -29,6 +30,7 @@ service BookService {
     rpc UpdateBook(UpdateBookRequest) returns (UpdateBookResponse) {
         option (google.api.http) = {
             put: "/v1/books/{book.id=*}"
+            body: "*"
         };
     }
 
@@ -49,6 +51,7 @@ service BookService {
     rpc UndeleteBook(UndeleteBookRequest) returns (UndeleteBookResponse) {
         option (google.api.http) = {
             post: "/v1/books/{id=*}"
+            body: "*"
         };
     }
     rpc SearchBook(SearchBookRequest) returns (SearchBookResponse) {
