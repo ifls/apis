@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package heyifeng.auth.v1;
+package com.heyifeng.auth.v1;
 
 
 option go_package = "auth";
@@ -14,7 +14,7 @@ service Auth {
 }
 
 message AuthRequest {
-    string response_type = 1;  // code 表示要求返回授权码
+    string response_type = 1;  // 枚举值 code 表示要求返回授权码
     string client_id = 2;   // 客户端唯一id
     string redirect_uri = 3;  //下一步要跳转的网站, 请求者指定的网站 追加 code=AUTHORIZATION_CODE query 参数
     string scope = 4;       // 表示授权范围

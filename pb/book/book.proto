@@ -1,14 +1,22 @@
 syntax = "proto3";
 
-package heyifeng.book.v1;
+package book.v1;
 
-option go_package = "book";
+option go_package = "github.com/ifls/apis/go/book";
 
 import "google/protobuf/field_mask.proto";
+import "google/protobuf/api.proto";
+import "google/api/annotations.proto";
 
 service BookService {
     // 标准方法
-    rpc CreateBook(CreateBookRequest) returns (CreateBookResponse) {}
+    rpc CreateBook(CreateBookRequest) returns (CreateBookResponse) {
+        option (google.api.http) = {
+            // The `parent` captures the parent resource name, such as "shelves/1".
+            post: "/v1/books"
+            body: "book"
+        };
+    }
     rpc DeleteBook(DeleteBookRequest) returns (DeleteBookResponse) {}
     rpc GetBook(GetBookRequest) returns (Book) {}
     // 如何保证原子更新？
