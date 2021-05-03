@@ -1,12 +1,4 @@
-//go:generate mkdir -p auth
-//go:generate protoc --go_out=./auth -I=../pb/auth auth.proto
-
-//go:generate mkdir -p book
-//go:generate protoc --go_out=./book -I=../pb/book book.proto
-
-//go:generate mkdir -p login
-//go:generate protoc --go_out=./login -I=../pb/login login.proto
-
-//go:generate mkdir -p user
-//go:generate protoc --go_out=./user -I=../pb/user user.proto
+//go:generate protoc --proto_path=../pb --go_out . --go_opt paths=source_relative book/book.proto
+//go:generate protoc --proto_path=../pb  --go-grpc_out . --go-grpc_opt paths=source_relative book/book.proto
+//go:generate protoc --proto_path=../pb  --grpc-gateway_out . --grpc-gateway_opt paths=source_relative --grpc-gateway_opt logtostderr=true  book/book.proto
 package _go
