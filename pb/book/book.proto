@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package book.v1;
 
-option go_package = "github.com/ifls/apis/go/book";
+option go_package = "github.com/ifls/apis/golang/book";
 
 import "google/protobuf/field_mask.proto";
 import "google/api/annotations.proto";
