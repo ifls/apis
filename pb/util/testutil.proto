@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package auth.v1;
+
+option go_package = "github.com/ifls/apis/golang/auth";
+
+// 授权服务
+service TestUtilService {
+    rpc Ping(PingRequest) returns (PingResponse) {}
+
+    rpc ServerInfo(ServerInfoRequest) returns (ServerInfoResponse) {
+        
+    }
+
+    rpc GetIncrementID(GetIncrementIDRequest) returns (GetIncrementIDResponse) {
+
+    }
+
+    rpc GetUUID(GetUUIDRequest) returns (GetUUIDResponse) {
+
+    }
+}
+
+message PingRequest {
+    string source = 1;
+}
+
+message PingResponse {
+    string time = 1;
+}
+
+message ServerInfoRequest {
+    string source = 1;
+}
+
+message ServerInfoResponse {
+    string hostname = 1;
+    string local_addr = 2;
+    string remote_addr = 3;
+    string request = 4;
+    string real_ip = 5;
+}
+
+message GetIncrementIDRequest {
+    string source = 1;
+    string key = 2;
+}
+
+message GetIncrementIDResponse {
+    string key = 1;
+    string id = 2;
+}
+
+message GetUUIDRequest {
+    string source = 1;
+    string key = 2;
+}
+
+message GetUUIDResponse {
+    string key = 1;
+    string id = 2;
+}
